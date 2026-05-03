@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-n*gyr_6_#_3+r0l8!$^yq(0=xz+x=_kev5$4d60ewq+6c@kk!w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -74,8 +75,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',      # Matches POSTGRES_DB in docker-compose
+        'USER': 'postgres',      # Matches POSTGRES_USER
+        'PASSWORD': 'postgres',  # Matches POSTGRES_PASSWORD
+        'HOST': 'db',            # Crucial: This is the Docker service name
+        'PORT': '5432',          # Default Postgres port
     }
 }
 
@@ -115,3 +120,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
